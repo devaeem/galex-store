@@ -7,6 +7,8 @@ import { Example } from './entities/example.entity';
 import { Model } from 'mongoose';
 import { PaginateQueryDto } from 'src/common/paginatedto';
 import { PaginateResponse } from 'src/common/inteface/respone';
+import { CreateExampleDto } from './dto/create-example.dto';
+import { UpdateExampleDto } from './dto/update-example.dto';
 @Injectable()
 export class ExampleService {
   constructor(
@@ -33,5 +35,25 @@ export class ExampleService {
       hasNext,
       hasPrevious,
     };
+  }
+
+  async create(createExampleDto: CreateExampleDto): Promise<Example> {
+    const example = await this.exampleModel.create(createExampleDto);
+    return example.save();
+  }
+
+  async update(
+    id: string,
+    updateExampleDto: UpdateExampleDto,
+  ): Promise<Example> {
+    return this.exampleModel.findByIdAndUpdate(id, updateExampleDto);
+  }
+
+  async delete(id: string): Promise<Example> {
+    return this.exampleModel.findByIdAndUpdate(id, { isDeleted: true });
+  }
+
+  async findById(id: string): Promise<Example> {
+    return this.exampleModel.findById(id);
   }
 }
