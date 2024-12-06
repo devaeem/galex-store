@@ -2,29 +2,30 @@ import {
   Controller,
   Get,
   Post,
-  Query,
   Body,
   Param,
-  Put,
   Delete,
+  HttpStatus,
+  Query,
+  Put,
 } from '@nestjs/common';
-import { ExampleService } from './example.service';
+import { ProductsService } from './products.service';
+import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
+import { Product } from './entities/product.entity';
 import { PaginateQueryDto } from 'src/common/paginatedto';
 import { Response } from 'src/common/inteface/respone';
-import { CreateExampleDto } from './dto/create-example.dto';
-import { Example } from './entities/example.entity';
-import { HttpStatus } from '@nestjs/common';
-import { UpdateExampleDto } from './dto/update-example.dto';
-@Controller('example')
-export class ExampleController {
-  constructor(private readonly exampleService: ExampleService) {}
+
+@Controller('products')
+export class ProductsController {
+  constructor(private readonly productsService: ProductsService) {}
 
   @Post()
   async create(
-    @Body() createExampleDto: CreateExampleDto,
-  ): Promise<Response<Example>> {
+    @Body() createDto: CreateProductDto,
+  ): Promise<Response<Product>> {
     try {
-      const result = await this.exampleService.create(createExampleDto);
+      const result = await this.productsService.create(createDto);
       return {
         status: HttpStatus.CREATED,
         message: 'Created successfully',
@@ -49,7 +50,7 @@ export class ExampleController {
   @Get()
   async findAll(@Query() query: PaginateQueryDto): Promise<Response<any>> {
     try {
-      const result = await this.exampleService.FindOperationginate(query);
+      const result = await this.productsService.FindOperationginate(query);
       return {
         status: HttpStatus.OK,
         message: 'Fetched successfully',
@@ -72,9 +73,12 @@ export class ExampleController {
   }
 
   @Get(':id')
-  async findById(@Param('id') id: string): Promise<Response<Example>> {
+  async findById(
+    @Param('id') id: string,
+    @Query('populate') populate?: string[],
+  ): Promise<Response<Product>> {
     try {
-      const result = await this.exampleService.findById(id);
+      const result = await this.productsService.findById(id, populate);
       return {
         status: HttpStatus.OK,
         message: 'Fetched successfully',
@@ -99,10 +103,10 @@ export class ExampleController {
   @Put(':id')
   async update(
     @Param('id') id: string,
-    @Body() updateExampleDto: UpdateExampleDto,
-  ): Promise<Response<Example>> {
+    @Body() updateDto: UpdateProductDto,
+  ): Promise<Response<Product>> {
     try {
-      const result = await this.exampleService.update(id, updateExampleDto);
+      const result = await this.productsService.update(id, updateDto);
       return {
         status: HttpStatus.OK,
         message: 'Updated successfully',
@@ -125,9 +129,9 @@ export class ExampleController {
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: string): Promise<Response<Example>> {
+  async delete(@Param('id') id: string): Promise<Response<Product>> {
     try {
-      const result = await this.exampleService.delete(id);
+      const result = await this.productsService.delete(id);
       return {
         status: HttpStatus.OK,
         message: 'Deleted successfully',

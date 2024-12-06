@@ -2,29 +2,30 @@ import {
   Controller,
   Get,
   Post,
-  Query,
   Body,
+  Query,
   Param,
-  Put,
   Delete,
+  Put,
+  HttpStatus,
 } from '@nestjs/common';
-import { ExampleService } from './example.service';
+import { CategoryService } from './category.service';
+import { CreateCategoryDto } from './dto/create-category.dto';
+import { UpdateCategoryDto } from './dto/update-category.dto';
+import { Category } from './entities/category.entity';
 import { PaginateQueryDto } from 'src/common/paginatedto';
 import { Response } from 'src/common/inteface/respone';
-import { CreateExampleDto } from './dto/create-example.dto';
-import { Example } from './entities/example.entity';
-import { HttpStatus } from '@nestjs/common';
-import { UpdateExampleDto } from './dto/update-example.dto';
-@Controller('example')
-export class ExampleController {
-  constructor(private readonly exampleService: ExampleService) {}
+
+@Controller('category')
+export class CategoryController {
+  constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
   async create(
-    @Body() createExampleDto: CreateExampleDto,
-  ): Promise<Response<Example>> {
+    @Body() createCategoryDto: CreateCategoryDto,
+  ): Promise<Response<Category>> {
     try {
-      const result = await this.exampleService.create(createExampleDto);
+      const result = await this.categoryService.create(createCategoryDto);
       return {
         status: HttpStatus.CREATED,
         message: 'Created successfully',
@@ -49,7 +50,7 @@ export class ExampleController {
   @Get()
   async findAll(@Query() query: PaginateQueryDto): Promise<Response<any>> {
     try {
-      const result = await this.exampleService.FindOperationginate(query);
+      const result = await this.categoryService.FindOperationginate(query);
       return {
         status: HttpStatus.OK,
         message: 'Fetched successfully',
@@ -72,9 +73,9 @@ export class ExampleController {
   }
 
   @Get(':id')
-  async findById(@Param('id') id: string): Promise<Response<Example>> {
+  async findById(@Param('id') id: string): Promise<Response<Category>> {
     try {
-      const result = await this.exampleService.findById(id);
+      const result = await this.categoryService.findById(id);
       return {
         status: HttpStatus.OK,
         message: 'Fetched successfully',
@@ -99,10 +100,10 @@ export class ExampleController {
   @Put(':id')
   async update(
     @Param('id') id: string,
-    @Body() updateExampleDto: UpdateExampleDto,
-  ): Promise<Response<Example>> {
+    @Body() updateCategoryDto: UpdateCategoryDto,
+  ): Promise<Response<Category>> {
     try {
-      const result = await this.exampleService.update(id, updateExampleDto);
+      const result = await this.categoryService.update(id, updateCategoryDto);
       return {
         status: HttpStatus.OK,
         message: 'Updated successfully',
@@ -125,9 +126,9 @@ export class ExampleController {
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: string): Promise<Response<Example>> {
+  async delete(@Param('id') id: string): Promise<Response<Category>> {
     try {
-      const result = await this.exampleService.delete(id);
+      const result = await this.categoryService.delete(id);
       return {
         status: HttpStatus.OK,
         message: 'Deleted successfully',
