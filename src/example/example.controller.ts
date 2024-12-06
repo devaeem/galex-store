@@ -26,7 +26,7 @@ export class ExampleController {
     try {
       const result = await this.exampleService.create(createExampleDto);
       return {
-        status: HttpStatus.OK,
+        status: HttpStatus.CREATED,
         message: 'Created successfully',
         data: result,
       };

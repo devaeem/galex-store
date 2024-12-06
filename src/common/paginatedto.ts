@@ -19,6 +19,11 @@ export class PaginateQueryDto {
   @IsOptional()
   sort?: string;
 
+  @IsNumber()
+  @IsOptional()
+  @Type(() => Number)
+  sortType?: 1 | -1;
+
   @IsString()
   @IsOptional()
   populate?: string;

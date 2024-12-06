@@ -9,6 +9,10 @@ import { PaginateQueryDto } from 'src/common/paginatedto';
 import { PaginateResponse } from 'src/common/inteface/respone';
 import { CreateExampleDto } from './dto/create-example.dto';
 import { UpdateExampleDto } from './dto/update-example.dto';
+
+type SortQuery = {
+  [key: string]: 1 | -1;
+};
 @Injectable()
 export class ExampleService {
   constructor(
@@ -18,10 +22,21 @@ export class ExampleService {
   async FindOperationginate(
     query: PaginateQueryDto,
   ): Promise<PaginateResponse<Example>> {
-    const { page, pageSize } = query;
+    const { page, pageSize, search, sort, sortType } = query;
     const skip = (page - 1) * pageSize;
-    const examples = await this.exampleModel.find().skip(skip).limit(pageSize);
-    const total = await this.exampleModel.countDocuments();
+
+    const searchQuery = search
+      ? { name: { $regex: search, $options: 'i' } }
+      : {};
+
+    const sortQuery = sort ? { [sort]: sortType ? sortType : 1 } : {};
+
+    const examples = await this.exampleModel
+      .find({ isDeleted: false, ...searchQuery })
+      .skip(skip)
+      .limit(pageSize)
+      .sort(sortQuery as SortQuery);
+    const total = await this.exampleModel.countDocuments({ isDeleted: false });
 
     const totalPages = Math.ceil(total / pageSize);
     const hasNext = page < totalPages;
